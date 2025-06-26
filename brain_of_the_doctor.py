@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 load_dotenv(dotenv_path=".env")
 
-GROQ_API_KEY = os.environ.get('GROQ_API_KEY ')
+GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
 
 
 #step 2 : Convert image into required format

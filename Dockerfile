@@ -1,24 +1,29 @@
 # Use an official Python base image
-FROM python:3.11-slim
-
-# Install system dependencies
-RUN apt-get update && \
-    apt-get install -y portaudio19-dev ffmpeg git && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
-# Set working directory
-WORKDIR /app
+FROM python:3.10-slim
 
 # Copy all files into the container
-COPY . .
+COPY . /ai_doctor/
+
+#set working directory
+WORKDIR /ai_doctor
 
 # Install Python dependencies
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    libportaudio2 \
+    portaudio19-dev \
+    ffmpeg \
+    gcc \
+    libc-dev \
+    make \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir -r requirements.txt
+
 
 # Expose the port your Gradio app will use
 EXPOSE 7860
 
 # Command to run your Gradio app
-CMD ["python", "gradio_app.py"]
+CMD ["sh","-c","python gradio_app.py"]

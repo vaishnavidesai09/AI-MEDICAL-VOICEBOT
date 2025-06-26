@@ -21,7 +21,7 @@ system_prompt="""You have to act as a professional doctor, i know you are not bu
 def process_inputs(audio_file_path, image_filepath):
     speech_to_text_output = transcribe_with_groq(stt_model="whisper-large-v3",
                                             audio_file_path=audio_file_path,
-                                            GROQ_API_KEY=os.environ.get('GROQ_API_KEY '))
+                                            GROQ_API_KEY=os.environ.get('GROQ_API_KEY'))
 
 
     # Handle the image input
@@ -29,8 +29,8 @@ def process_inputs(audio_file_path, image_filepath):
         doctor_response = analyse_image_with_query(query=system_prompt+speech_to_text_output, encoded_image=encode_image(image_filepath), model="meta-llama/llama-4-scout-17b-16e-instruct")
     else:
         doctor_response = "No image provided for me to analyze"
-
-    voice_of_doctor = text_to_speech_with_eleven_labs(input_text=doctor_response, output_filepath="final.mp3",wav_filepath="doctor_voice.wav") 
+    output_mp3 = "final.mp3"
+    voice_of_doctor = text_to_speech_with_eleven_labs(input_text=doctor_response, output_mp3=output_mp3,output_wav="doctor_voice.wav") 
 
     return speech_to_text_output, doctor_response, voice_of_doctor
 
@@ -45,11 +45,13 @@ iface = gr.Interface(
     outputs=[
         gr.Textbox(label="Speech to Text"),
         gr.Textbox(label="Doctor's Response"),
-        gr.Audio("Temp.mp3")
+        gr.Audio(type="filepath")
     ],
     title="AI Doctor with Vision and Voice"
 )
 
-iface.launch(debug=True)
+iface.launch(server_name="0.0.0.0", server_port=7860, debug=True)
+
+
 
 #link to visit http://127.0.0.1:7860/
